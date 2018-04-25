@@ -48,17 +48,21 @@
 DRAMSim3::DRAMSim3(const Params* p) :
     AbstractMemory(p),
     port(name() + ".port", *this),
-    wrapper(p->deviceConfigFile, p->filePath, NULL, NULL),
+    read_cb(std::bind(&DRAMSim3::readComplete,
+                      this, 0, std::placeholders::_1)),
+    write_cb(std::bind(&DRAMSim3::writeComplete,
+                       this, 0, std::placeholders::_1)),
+    wrapper(p->configFile, p->filePath, read_cb, write_cb),
     retryReq(false), retryResp(false), startTick(0),
     nbrOutstandingReads(0), nbrOutstandingWrites(0),
     sendResponseEvent([this]{ sendResponse(); }, name()),
     tickEvent([this]{ tick(); }, name())
 {
-    read_cb =
-        std::bind(&DRAMSim3::readComplete, this, 0, std::placeholders::_1);
-    write_cb =
-        std::bind(&DRAMSim3::writeComplete, this, 0, std::placeholders::_1);
-    wrapper.setCallbacks(read_cb, write_cb);
+    // read_cb =
+    //     std::bind(&DRAMSim3::readComplete, this, 0, std::placeholders::_1);
+    // write_cb =
+    //     std::bind(&DRAMSim3::writeComplete, this, 0, std::placeholders::_1);
+    // wrapper.setCallbacks(read_cb, write_cb);
 
     DPRINTF(DRAMSim3,
             "Instantiated DRAMSim3 with clock %d ns and queue size %d\n",

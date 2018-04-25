@@ -90,6 +90,12 @@ class DRAMSim3 : public AbstractMemory
     MemoryPort port;
 
     /**
+     * Callback functions
+     */
+    std::function<void(uint64_t)> read_cb;
+    std::function<void(uint64_t)> write_cb;
+
+    /**
      * The actual DRAMSim3 wrapper
      */
     DRAMSim3Wrapper wrapper;
@@ -133,11 +139,6 @@ class DRAMSim3 : public AbstractMemory
      */
     std::deque<PacketPtr> responseQueue;
 
-    /**
-     * Callback functions
-     */
-    std::function<void(uint64_t)> read_cb;
-    std::function<void(uint64_t)> write_cb;
 
     unsigned int nbrOutstanding() const;
 
