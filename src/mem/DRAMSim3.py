@@ -46,8 +46,8 @@ class DRAMSim3(AbstractMemory):
     # A single port for now
     port = SlavePort("Slave port")
 
-    configFile = Param.String("ext/dramsim3/DRAMSim3/configs/"
+    config_file = Param.String("ext/dramsim3/DRAMSim3/configs/"
                               "DDR4_8Gb_x8_2400.ini",
                               "One configuration file")
-    filePath = Param.String("ext/dramsim3/DRAMSim3/",
+    file_path = Param.String("ext/dramsim3/DRAMSim3/",
                             "Directory to prepend to file names")

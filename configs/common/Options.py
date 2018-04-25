@@ -88,8 +88,11 @@ def addNoISAOptions(parser):
                       default="512MB",
                       help="Specify the physical memory size (single memory)")
 
-
     parser.add_option("--memchecker", action="store_true")
+
+    # DRAMSim3 option
+    parser.add_option("--dramsim3-ini", type="string", default=None,
+                      help = "dramsim3 config file")
 
     # Cache Options
     parser.add_option("--external-memory-system", type="string",
