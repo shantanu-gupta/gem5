@@ -110,15 +110,15 @@ DRAMSim3Wrapper::setCallbacks(std::function<void(uint64_t)> read_complete,
 }
 
 bool
-DRAMSim3Wrapper::canAccept() const
+DRAMSim3Wrapper::canAccept(uint64_t addr, bool is_write) const
 {
-    return dramsim->IsInsertable();
+    return dramsim->WillAcceptTransaction(addr, is_write);
 }
 
 void
-DRAMSim3Wrapper::enqueue(bool is_write, uint64_t addr)
+DRAMSim3Wrapper::enqueue(uint64_t addr, bool is_write)
 {
-    bool success M5_VAR_USED = dramsim->InsertRequest(is_write, addr);
+    bool success M5_VAR_USED = dramsim->AddTransaction(addr, is_write);
     assert(success);
 }
 

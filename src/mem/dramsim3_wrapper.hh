@@ -116,14 +116,14 @@ class DRAMSim3Wrapper
      *
      * @return true if the controller can accept transactions
      */
-    bool canAccept() const;
+    bool canAccept(uint64_t addr, bool is_write) const;
 
     /**
      * Enqueue a packet. This assumes that canAccept has returned true.
      *
      * @param pkt Packet to turn into a DRAMSim3 transaction
      */
-    void enqueue(bool is_write, uint64_t addr);
+    void enqueue(uint64_t addr, bool is_write);
 
     /**
      * Get the internal clock period used by DRAMSim3, specified in

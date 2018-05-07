@@ -221,14 +221,14 @@ DRAMSim3::recvTimingReq(PacketPtr pkt)
     if (can_accept) {
         // we should never have a situation when we think there is space,
         // and there isn't
-        assert(wrapper.canAccept());
+        assert(wrapper.canAccept(pkt->getAddr(), pkt->isWrite()));
 
         DPRINTF(DRAMSim3, "Enqueueing address %lld\n", pkt->getAddr());
 
         // @todo what about the granularity here, implicit assumption that
         // a transaction matches the burst size of the memory (which we
         // cannot determine without parsing the ini file ourselves)
-        wrapper.enqueue(pkt->isWrite(), pkt->getAddr());
+        wrapper.enqueue(pkt->getAddr(), pkt->isWrite());
 
         return true;
     } else {
