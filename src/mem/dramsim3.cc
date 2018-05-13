@@ -58,12 +58,6 @@ DRAMSim3::DRAMSim3(const Params* p) :
     sendResponseEvent([this]{ sendResponse(); }, name()),
     tickEvent([this]{ tick(); }, name())
 {
-    // read_cb =
-    //     std::bind(&DRAMSim3::readComplete, this, 0, std::placeholders::_1);
-    // write_cb =
-    //     std::bind(&DRAMSim3::writeComplete, this, 0, std::placeholders::_1);
-    // wrapper.setCallbacks(read_cb, write_cb);
-
     DPRINTF(DRAMSim3,
             "Instantiated DRAMSim3 with clock %d ns and queue size %d\n",
             wrapper.clockPeriod(), wrapper.queueSize());
@@ -286,8 +280,6 @@ DRAMSim3::accessAndRespond(PacketPtr pkt)
 
 void DRAMSim3::readComplete(unsigned id, uint64_t addr)
 {
-    // assert(cycle == divCeil(curTick() - startTick,
-    //                         wrapper.clockPeriod() * SimClock::Int::ns));
 
     DPRINTF(DRAMSim3, "Read to address %lld complete\n", addr);
 
@@ -314,8 +306,6 @@ void DRAMSim3::readComplete(unsigned id, uint64_t addr)
 
 void DRAMSim3::writeComplete(unsigned id, uint64_t addr)
 {
-    // assert(cycle == divCeil(curTick() - startTick,
-    //                         wrapper.clockPeriod() * SimClock::Int::ns));
 
     DPRINTF(DRAMSim3, "Write to address %lld complete\n", addr);
 
