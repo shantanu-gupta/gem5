@@ -41,6 +41,8 @@ import os
 
 Import('main')
 
+thermal = False
+
 # See if we got a cloned DRAMSim3 repo as a subdirectory and set the
 # HAVE_DRAMSIM flag accordingly
 if not os.path.exists(Dir('.').srcnode().abspath + '/DRAMSim3'):
@@ -50,16 +52,17 @@ if not os.path.exists(Dir('.').srcnode().abspath + '/DRAMSim3'):
 # We have got the folder, so add the library and build the wrappers
 main['HAVE_DRAMSIM3'] = True
 
-# Add the appropriate files. We leave out the trace driven simulator
-dram_files = []
 
 dramsim_path = os.path.join(Dir('#').abspath, 'ext/dramsim3/DRAMSim3')
 
-superlu_path = os.path.join(dramsim_path, 'ext/SuperLU_MT_3.1/lib')
-
-
-main.Prepend(CPPPATH=Dir('.'))
-main.Append(LIBS=['dramsim3', 'superlu_mt_OPENMP', 'm', 'f77blas',
-                  'atlas', 'gomp'],
-            LIBPATH=[dramsim_path, superlu_path])
+if thermal:
+    superlu_path = os.path.join(dramsim_path, 'ext/SuperLU_MT_3.1/lib')
+    main.Prepend(CPPPATH=Dir('.'))
+    main.Append(LIBS=['dramsim3', 'superlu_mt_OPENMP', 'm', 'f77blas',
+                      'atlas', 'gomp'],
+                LIBPATH=[dramsim_path, superlu_path])
+else:
+    main.Prepend(CPPPATH=Dir('.'))
+    main.Append(LIBS=['dramsim3'],
+                LIBPATH=[dramsim_path])
 
