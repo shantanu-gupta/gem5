@@ -474,7 +474,7 @@ def run(options, root, testsys, cpu_class):
             switch_cpus[i].isa = testsys.cpu[i].isa
             # simulation period
             if options.maxinsts:
-                switch_cpus[i].max_insts_any_thread = options.maxinsts
+                switch_cpus[i].max_insts_all_threads = options.maxinsts
             # Add checker cpu if selected
             if options.checker:
                 switch_cpus[i].addCheckerCpu()
@@ -650,12 +650,26 @@ def run(options, root, testsys, cpu_class):
             print("Switch at instruction count:%s" %
                     str(testsys.cpu[0].max_insts_any_thread))
             exit_event = m5.simulate()
+            ff_finished = 0
+            while "a thread reached" in exit_event.getCause():
+                ff_finished += 1
+                print("one cpu finished fast forwarding", ff_finished)
+                if ff_finished == np:
+                    m5.stats.reset()
+                    m5.switchCpus(testsys, switch_cpu_list)
+                exit_event = m5.simulate(maxtick - m5.curTick())
+            exit(exit_event.getCause())
         else:
             print("Switch at curTick count:%s" % str(10000))
             exit_event = m5.simulate(10000)
         print("Switched CPUS @ tick %s" % (m5.curTick()))
 
+        print("debug: making sure all cpu switchs for multi-program worklaod")
         m5.switchCpus(testsys, switch_cpu_list)
+        for cpu, s_cpu in switch_cpu_list:
+            print(cpu.max_insts_any_thread, s_cpu.max_insts_any_thread)
+            print(cpu.max_insts_all_threads, s_cpu.max_insts_all_threads)
+            print('\n')
 
         if options.standard_switch:
             print("Switch at instruction count:%d" %
