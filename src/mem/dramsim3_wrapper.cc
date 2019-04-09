@@ -52,7 +52,7 @@
 
 #include <fstream>
 
-#include "DRAMSim3/src/memory_system.h"
+#include "DRAMSim3/src/dramsim3.h"
 #include "base/compiler.hh"
 #include "base/logging.hh"
 
@@ -100,6 +100,12 @@ void
 DRAMSim3Wrapper::printStats()
 {
     dramsim->PrintStats();
+}
+
+void
+DRAMSim3Wrapper::resetStats()
+{
+    dramsim->ResetStats();
 }
 
 void

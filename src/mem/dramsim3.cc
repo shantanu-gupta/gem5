@@ -95,6 +95,11 @@ DRAMSim3::startup()
 }
 
 void
+DRAMSim3::resetStats() {
+    wrapper.resetStats();
+}
+
+void
 DRAMSim3::sendResponse()
 {
     assert(!retryResp);

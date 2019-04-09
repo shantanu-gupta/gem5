@@ -103,6 +103,11 @@ class DRAMSim3Wrapper
     void printStats();
 
     /**
+     * Reset stats (useful for fastforwarding switch)
+     */
+    void resetStats();
+
+    /**
      * Set the callbacks to use for read and write completion.
      *
      * @param read_callback Callback used for read completions

@@ -205,6 +205,8 @@ class DRAMSim3 : public AbstractMemory
     void init() override;
     void startup() override;
 
+    void resetStats() override;
+
   protected:
 
     Tick recvAtomic(PacketPtr pkt);
