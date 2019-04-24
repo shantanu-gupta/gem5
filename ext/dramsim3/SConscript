@@ -64,7 +64,7 @@ if thermal:
 else:
     main.Prepend(CPPPATH=Dir('.'))
     # a littel hacky but can get a shared library working
-    main.Append(LIBS=['dramsim3'],
+    main.Append(LIBS=['dramsim3', 'gomp'],
                 LIBPATH=[dramsim_path],  # compile-time lookup
                 RPATH=[dramsim_path],  # runtime lookup
                 CPPPATH=[dramsim_path+'/src/'])
