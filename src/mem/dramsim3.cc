@@ -138,13 +138,16 @@ DRAMSim3::nbrOutstanding() const
 void
 DRAMSim3::tick()
 {
-    wrapper.tick();
+    // Only tick when it's timing mode
+    if (system()->isTimingMode()) {
+        wrapper.tick();
 
-    // is the connected port waiting for a retry, if so check the
-    // state and send a retry if conditions have changed
-    if (retryReq && nbrOutstanding() < wrapper.queueSize()) {
-        retryReq = false;
-        port.sendRetryReq();
+        // is the connected port waiting for a retry, if so check the
+        // state and send a retry if conditions have changed
+        if (retryReq && nbrOutstanding() < wrapper.queueSize()) {
+            retryReq = false;
+            port.sendRetryReq();
+        }
     }
 
     schedule(tickEvent, curTick() + wrapper.clockPeriod() * SimClock::Int::ns);
