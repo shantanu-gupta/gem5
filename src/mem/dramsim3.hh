@@ -39,7 +39,7 @@
 
 /**
  * @file
- * DRAMSim3
+ * DRAMsim3
  */
 #ifndef __MEM_DRAMSIM3_HH__
 #define __MEM_DRAMSIM3_HH__
@@ -51,9 +51,9 @@
 #include "mem/abstract_mem.hh"
 #include "mem/dramsim3_wrapper.hh"
 #include "mem/qport.hh"
-#include "params/DRAMSim3.hh"
+#include "params/DRAMsim3.hh"
 
-class DRAMSim3 : public AbstractMemory
+class DRAMsim3 : public AbstractMemory
 {
   private:
 
@@ -67,11 +67,11 @@ class DRAMSim3 : public AbstractMemory
 
       private:
 
-        DRAMSim3& memory;
+        DRAMsim3& memory;
 
       public:
 
-        MemoryPort(const std::string& _name, DRAMSim3& _memory);
+        MemoryPort(const std::string& _name, DRAMsim3& _memory);
 
       protected:
 
@@ -96,9 +96,9 @@ class DRAMSim3 : public AbstractMemory
     std::function<void(uint64_t)> write_cb;
 
     /**
-     * The actual DRAMSim3 wrapper
+     * The actual DRAMsim3 wrapper
      */
-    DRAMSim3Wrapper wrapper;
+    DRAMsim3Wrapper wrapper;
 
     /**
      * Is the connected port waiting for a retry from us
@@ -126,7 +126,7 @@ class DRAMSim3 : public AbstractMemory
 
     /**
      * Count the number of outstanding transactions so that we can
-     * block any further requests until there is space in DRAMSim3 and
+     * block any further requests until there is space in DRAMsim3 and
      * the sending queue we need to buffer the response packets.
      */
     unsigned int nbrOutstandingReads;
@@ -134,7 +134,7 @@ class DRAMSim3 : public AbstractMemory
 
     /**
      * Queue to hold response packets until we can send them
-     * back. This is needed as DRAMSim3 unconditionally passes
+     * back. This is needed as DRAMsim3 unconditionally passes
      * responses back without any flow control.
      */
     std::deque<PacketPtr> responseQueue;
@@ -176,15 +176,15 @@ class DRAMSim3 : public AbstractMemory
 
   public:
 
-    typedef DRAMSim3Params Params;
-    DRAMSim3(const Params *p);
+    typedef DRAMsim3Params Params;
+    DRAMsim3(const Params *p);
 
     /**
      * Read completion callback.
      *
      * @param id Channel id of the responder
      * @param addr Address of the request
-     * @param cycle Internal cycle count of DRAMSim3
+     * @param cycle Internal cycle count of DRAMsim3
      */
     void readComplete(unsigned id, uint64_t addr);
 
@@ -193,7 +193,7 @@ class DRAMSim3 : public AbstractMemory
      *
      * @param id Channel id of the responder
      * @param addr Address of the request
-     * @param cycle Internal cycle count of DRAMSim3
+     * @param cycle Internal cycle count of DRAMsim3
      */
     void writeComplete(unsigned id, uint64_t addr);
 

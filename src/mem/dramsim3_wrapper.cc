@@ -41,7 +41,7 @@
 
 /**
  * When building the debug binary, we need to undo the command-line
- * definition of DEBUG not to clash with DRAMSim3 print macros that
+ * definition of DEBUG not to clash with DRAMsim3 print macros that
  * are included for no obvious reason.
  */
 #ifdef DEBUG
@@ -52,11 +52,11 @@
 
 #include <fstream>
 
-#include "DRAMSim3/src/dramsim3.h"
+#include "DRAMsim3/src/dramsim3.h"
 #include "base/compiler.hh"
 #include "base/logging.hh"
 
-DRAMSim3Wrapper::DRAMSim3Wrapper(const std::string& config_file,
+DRAMsim3Wrapper::DRAMsim3Wrapper(const std::string& config_file,
                                  const std::string& working_dir,
                                  std::function<void(uint64_t)> read_cb,
                                  std::function<void(uint64_t)> write_cb) :
@@ -64,19 +64,19 @@ DRAMSim3Wrapper::DRAMSim3Wrapper(const std::string& config_file,
                                        read_cb, write_cb)),
     _clockPeriod(0.0), _queueSize(0), _burstSize(0)
 {
-    // there is no way of getting DRAMSim3 to tell us what frequency
+    // there is no way of getting DRAMsim3 to tell us what frequency
     // it is assuming, so we have to extract it ourselves
     _clockPeriod = dramsim->GetTCK();
 
     if (!_clockPeriod)
-        fatal("DRAMSim3 wrapper failed to get clock\n");
+        fatal("DRAMsim3 wrapper failed to get clock\n");
 
-    // we also need to know what transaction queue size DRAMSim3 is
+    // we also need to know what transaction queue size DRAMsim3 is
     // using so we can stall when responses are blocked
     _queueSize = dramsim->GetQueueSize();
 
     if (!_queueSize)
-        fatal("DRAMSim3 wrapper failed to get queue size\n");
+        fatal("DRAMsim3 wrapper failed to get queue size\n");
 
 
    // finally, get the data bus bits and burst length so we can add a
@@ -85,69 +85,69 @@ DRAMSim3Wrapper::DRAMSim3Wrapper(const std::string& config_file,
    unsigned int burstLength = dramsim->GetBurstLength();
 
    if (!dataBusBits || !burstLength)
-       fatal("DRAMSim3 wrapper failed to get burst size\n");
+       fatal("DRAMsim3 wrapper failed to get burst size\n");
 
    _burstSize = dataBusBits * burstLength / 8;
 }
 
-DRAMSim3Wrapper::~DRAMSim3Wrapper()
+DRAMsim3Wrapper::~DRAMsim3Wrapper()
 {
     delete dramsim;
 }
 
 
 void
-DRAMSim3Wrapper::printStats()
+DRAMsim3Wrapper::printStats()
 {
     dramsim->PrintStats();
 }
 
 void
-DRAMSim3Wrapper::resetStats()
+DRAMsim3Wrapper::resetStats()
 {
     dramsim->ResetStats();
 }
 
 void
-DRAMSim3Wrapper::setCallbacks(std::function<void(uint64_t)> read_complete,
+DRAMsim3Wrapper::setCallbacks(std::function<void(uint64_t)> read_complete,
                               std::function<void(uint64_t)> write_complete)
 {
     dramsim->RegisterCallbacks(read_complete, write_complete);
 }
 
 bool
-DRAMSim3Wrapper::canAccept(uint64_t addr, bool is_write) const
+DRAMsim3Wrapper::canAccept(uint64_t addr, bool is_write) const
 {
     return dramsim->WillAcceptTransaction(addr, is_write);
 }
 
 void
-DRAMSim3Wrapper::enqueue(uint64_t addr, bool is_write)
+DRAMsim3Wrapper::enqueue(uint64_t addr, bool is_write)
 {
     bool success M5_VAR_USED = dramsim->AddTransaction(addr, is_write);
     assert(success);
 }
 
 double
-DRAMSim3Wrapper::clockPeriod() const
+DRAMsim3Wrapper::clockPeriod() const
 {
     return _clockPeriod;
 }
 
 unsigned int
-DRAMSim3Wrapper::queueSize() const
+DRAMsim3Wrapper::queueSize() const
 {
     return _queueSize;
 }
 
 unsigned int
-DRAMSim3Wrapper::burstSize() const
+DRAMsim3Wrapper::burstSize() const
 {
     return _burstSize;
 }
 
 void
-DRAMSim3Wrapper::tick()
+DRAMsim3Wrapper::tick()
 {
     dramsim->ClockTick();
 }

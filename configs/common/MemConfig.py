@@ -90,7 +90,7 @@ def mem_names():
     return _mem_classes.keys()
 
 def dramsim3_size_mb(ini_file):
-    """Parsing ini file for DRAMSim3 so that the system knows mem size"""
+    """Parsing ini file for DRAMsim3 so that the system knows mem size"""
     assert(os.path.exists(ini_file))
     import ConfigParser
     config = ConfigParser.ConfigParser()
@@ -178,12 +178,12 @@ def config_mem(options, system):
     opt_mem_ranks = getattr(options, "mem_ranks", None)
     opt_dramsim3_ini = getattr(options, 'dramsim3_ini', None)
 
-    if opt_mem_type == "DRAMSim3":
+    if opt_mem_type == "DRAMsim3":
         ini_file = ''
         if opt_dramsim3_ini:
             ini_file = opt_dramsim3_ini
         else:
-            ini_file = m5.objects.DRAMSim3.config_file
+            ini_file = m5.objects.DRAMsim3.config_file
         mem_size = dramsim3_size_mb(ini_file)
         mem_size_str =  str(mem_size) + "MB"
         options.mem_size = mem_size_str
@@ -240,9 +240,9 @@ def config_mem(options, system):
     # address mapping in the case of a DRAM
     for r in system.mem_ranges:
         for i in xrange(nbr_mem_ctrls):
-            # We need to do a couple of things differently for DRAMSim3
+            # We need to do a couple of things differently for DRAMsim3
             # use same outdir as gem5, and use its own address mapping
-            if opt_mem_type == 'DRAMSim3':
+            if opt_mem_type == 'DRAMsim3':
                 mem_ctrl = cls()
                 if opt_dramsim3_ini:
                     mem_ctrl.config_file = opt_dramsim3_ini

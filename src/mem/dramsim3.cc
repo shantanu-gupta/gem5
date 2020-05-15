@@ -41,16 +41,16 @@
 
 #include "base/callback.hh"
 #include "base/trace.hh"
-#include "debug/DRAMSim3.hh"
+#include "debug/DRAMsim3.hh"
 #include "debug/Drain.hh"
 #include "sim/system.hh"
 
-DRAMSim3::DRAMSim3(const Params* p) :
+DRAMsim3::DRAMsim3(const Params* p) :
     AbstractMemory(p),
     port(name() + ".port", *this),
-    read_cb(std::bind(&DRAMSim3::readComplete,
+    read_cb(std::bind(&DRAMsim3::readComplete,
                       this, 0, std::placeholders::_1)),
-    write_cb(std::bind(&DRAMSim3::writeComplete,
+    write_cb(std::bind(&DRAMsim3::writeComplete,
                        this, 0, std::placeholders::_1)),
     wrapper(p->config_file, p->file_path, read_cb, write_cb),
     retryReq(false), retryResp(false), startTick(0),
@@ -58,35 +58,35 @@ DRAMSim3::DRAMSim3(const Params* p) :
     sendResponseEvent([this]{ sendResponse(); }, name()),
     tickEvent([this]{ tick(); }, name())
 {
-    DPRINTF(DRAMSim3,
-            "Instantiated DRAMSim3 with clock %d ns and queue size %d\n",
+    DPRINTF(DRAMsim3,
+            "Instantiated DRAMsim3 with clock %d ns and queue size %d\n",
             wrapper.clockPeriod(), wrapper.queueSize());
 
     // Register a callback to compensate for the destructor not
-    // being called. The callback prints the DRAMSim3 stats.
-    Callback* cb = new MakeCallback<DRAMSim3Wrapper,
-        &DRAMSim3Wrapper::printStats>(wrapper);
+    // being called. The callback prints the DRAMsim3 stats.
+    Callback* cb = new MakeCallback<DRAMsim3Wrapper,
+        &DRAMsim3Wrapper::printStats>(wrapper);
     registerExitCallback(cb);
 }
 
 void
-DRAMSim3::init()
+DRAMsim3::init()
 {
     AbstractMemory::init();
 
     if (!port.isConnected()) {
-        fatal("DRAMSim3 %s is unconnected!\n", name());
+        fatal("DRAMsim3 %s is unconnected!\n", name());
     } else {
         port.sendRangeChange();
     }
 
     if (system()->cacheLineSize() != wrapper.burstSize())
-        fatal("DRAMSim3 burst size %d does not match cache line size %d\n",
+        fatal("DRAMsim3 burst size %d does not match cache line size %d\n",
               wrapper.burstSize(), system()->cacheLineSize());
 }
 
 void
-DRAMSim3::startup()
+DRAMsim3::startup()
 {
     startTick = curTick();
 
@@ -95,23 +95,23 @@ DRAMSim3::startup()
 }
 
 void
-DRAMSim3::resetStats() {
+DRAMsim3::resetStats() {
     wrapper.resetStats();
 }
 
 void
-DRAMSim3::sendResponse()
+DRAMsim3::sendResponse()
 {
     assert(!retryResp);
     assert(!responseQueue.empty());
 
-    DPRINTF(DRAMSim3, "Attempting to send response\n");
+    DPRINTF(DRAMsim3, "Attempting to send response\n");
 
     bool success = port.sendTimingResp(responseQueue.front());
     if (success) {
         responseQueue.pop_front();
 
-        DPRINTF(DRAMSim3, "Have %d read, %d write, %d responses outstanding\n",
+        DPRINTF(DRAMsim3, "Have %d read, %d write, %d responses outstanding\n",
                 nbrOutstandingReads, nbrOutstandingWrites,
                 responseQueue.size());
 
@@ -123,20 +123,20 @@ DRAMSim3::sendResponse()
     } else {
         retryResp = true;
 
-        DPRINTF(DRAMSim3, "Waiting for response retry\n");
+        DPRINTF(DRAMsim3, "Waiting for response retry\n");
 
         assert(!sendResponseEvent.scheduled());
     }
 }
 
 unsigned int
-DRAMSim3::nbrOutstanding() const
+DRAMsim3::nbrOutstanding() const
 {
     return nbrOutstandingReads + nbrOutstandingWrites + responseQueue.size();
 }
 
 void
-DRAMSim3::tick()
+DRAMsim3::tick()
 {
     // Only tick when it's timing mode
     if (system()->isTimingMode()) {
@@ -154,7 +154,7 @@ DRAMSim3::tick()
 }
 
 Tick
-DRAMSim3::recvAtomic(PacketPtr pkt)
+DRAMsim3::recvAtomic(PacketPtr pkt)
 {
     access(pkt);
 
@@ -163,7 +163,7 @@ DRAMSim3::recvAtomic(PacketPtr pkt)
 }
 
 void
-DRAMSim3::recvFunctional(PacketPtr pkt)
+DRAMsim3::recvFunctional(PacketPtr pkt)
 {
     pkt->pushLabel(name());
 
@@ -177,7 +177,7 @@ DRAMSim3::recvFunctional(PacketPtr pkt)
 }
 
 bool
-DRAMSim3::recvTimingReq(PacketPtr pkt)
+DRAMsim3::recvTimingReq(PacketPtr pkt)
 {
     // if a cache is responding, sink the packet without further action
     if (pkt->cacheResponding()) {
@@ -225,7 +225,7 @@ DRAMSim3::recvTimingReq(PacketPtr pkt)
         // and there isn't
         assert(wrapper.canAccept(pkt->getAddr(), pkt->isWrite()));
 
-        DPRINTF(DRAMSim3, "Enqueueing address %lld\n", pkt->getAddr());
+        DPRINTF(DRAMsim3, "Enqueueing address %lld\n", pkt->getAddr());
 
         // @todo what about the granularity here, implicit assumption that
         // a transaction matches the burst size of the memory (which we
@@ -240,9 +240,9 @@ DRAMSim3::recvTimingReq(PacketPtr pkt)
 }
 
 void
-DRAMSim3::recvRespRetry()
+DRAMsim3::recvRespRetry()
 {
-    DPRINTF(DRAMSim3, "Retrying\n");
+    DPRINTF(DRAMsim3, "Retrying\n");
 
     assert(retryResp);
     retryResp = false;
@@ -250,9 +250,9 @@ DRAMSim3::recvRespRetry()
 }
 
 void
-DRAMSim3::accessAndRespond(PacketPtr pkt)
+DRAMsim3::accessAndRespond(PacketPtr pkt)
 {
-    DPRINTF(DRAMSim3, "Access for address %lld\n", pkt->getAddr());
+    DPRINTF(DRAMsim3, "Access for address %lld\n", pkt->getAddr());
 
     bool needsResponse = pkt->needsResponse();
 
@@ -270,7 +270,7 @@ DRAMSim3::accessAndRespond(PacketPtr pkt)
         // Reset the timings of the packet
         pkt->headerDelay = pkt->payloadDelay = 0;
 
-        DPRINTF(DRAMSim3, "Queuing response for address %lld\n",
+        DPRINTF(DRAMsim3, "Queuing response for address %lld\n",
                 pkt->getAddr());
 
         // queue it to be sent back
@@ -286,10 +286,10 @@ DRAMSim3::accessAndRespond(PacketPtr pkt)
     }
 }
 
-void DRAMSim3::readComplete(unsigned id, uint64_t addr)
+void DRAMsim3::readComplete(unsigned id, uint64_t addr)
 {
 
-    DPRINTF(DRAMSim3, "Read to address %lld complete\n", addr);
+    DPRINTF(DRAMsim3, "Read to address %lld complete\n", addr);
 
     // get the outstanding reads for the address in question
     auto p = outstandingReads.find(addr);
@@ -312,10 +312,10 @@ void DRAMSim3::readComplete(unsigned id, uint64_t addr)
     accessAndRespond(pkt);
 }
 
-void DRAMSim3::writeComplete(unsigned id, uint64_t addr)
+void DRAMsim3::writeComplete(unsigned id, uint64_t addr)
 {
 
-    DPRINTF(DRAMSim3, "Write to address %lld complete\n", addr);
+    DPRINTF(DRAMsim3, "Write to address %lld complete\n", addr);
 
     // get the outstanding reads for the address in question
     auto p = outstandingWrites.find(addr);
@@ -335,7 +335,7 @@ void DRAMSim3::writeComplete(unsigned id, uint64_t addr)
 }
 
 BaseSlavePort&
-DRAMSim3::getSlavePort(const std::string &if_name, PortID idx)
+DRAMsim3::getSlavePort(const std::string &if_name, PortID idx)
 {
     if (if_name != "port") {
         return MemObject::getSlavePort(if_name, idx);
@@ -345,20 +345,20 @@ DRAMSim3::getSlavePort(const std::string &if_name, PortID idx)
 }
 
 DrainState
-DRAMSim3::drain()
+DRAMsim3::drain()
 {
     // check our outstanding reads and writes and if any they need to
     // drain
     return nbrOutstanding() != 0 ? DrainState::Draining : DrainState::Drained;
 }
 
-DRAMSim3::MemoryPort::MemoryPort(const std::string& _name,
-                                 DRAMSim3& _memory)
+DRAMsim3::MemoryPort::MemoryPort(const std::string& _name,
+                                 DRAMsim3& _memory)
     : SlavePort(_name, &_memory), memory(_memory)
 { }
 
 AddrRangeList
-DRAMSim3::MemoryPort::getAddrRanges() const
+DRAMsim3::MemoryPort::getAddrRanges() const
 {
     AddrRangeList ranges;
     ranges.push_back(memory.getAddrRange());
@@ -366,32 +366,32 @@ DRAMSim3::MemoryPort::getAddrRanges() const
 }
 
 Tick
-DRAMSim3::MemoryPort::recvAtomic(PacketPtr pkt)
+DRAMsim3::MemoryPort::recvAtomic(PacketPtr pkt)
 {
     return memory.recvAtomic(pkt);
 }
 
 void
-DRAMSim3::MemoryPort::recvFunctional(PacketPtr pkt)
+DRAMsim3::MemoryPort::recvFunctional(PacketPtr pkt)
 {
     memory.recvFunctional(pkt);
 }
 
 bool
-DRAMSim3::MemoryPort::recvTimingReq(PacketPtr pkt)
+DRAMsim3::MemoryPort::recvTimingReq(PacketPtr pkt)
 {
     // pass it to the memory controller
     return memory.recvTimingReq(pkt);
 }
 
 void
-DRAMSim3::MemoryPort::recvRespRetry()
+DRAMsim3::MemoryPort::recvRespRetry()
 {
     memory.recvRespRetry();
 }
 
-DRAMSim3*
-DRAMSim3Params::create()
+DRAMsim3*
+DRAMsim3Params::create()
 {
-    return new DRAMSim3(this);
+    return new DRAMsim3(this);
 }

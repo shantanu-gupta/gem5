@@ -39,7 +39,7 @@
 
 /**
  * @file
- * DRAMSim3Wrapper declaration
+ * DRAMsim3Wrapper declaration
  */
 
 #ifndef __MEM_DRAMSIM3_WRAPPER_HH__
@@ -58,14 +58,14 @@ class MemorySystem;
 }
 
 /**
- * Wrapper class to avoid having DRAMSim3 names like ClockDomain etc
- * clashing with the normal gem5 world. Many of the DRAMSim3 headers
+ * Wrapper class to avoid having DRAMsim3 names like ClockDomain etc
+ * clashing with the normal gem5 world. Many of the DRAMsim3 headers
  * do not make use of namespaces, and quite a few also open up
  * std. The only thing that needs to be exposed externally are the
  * callbacks. This wrapper effectively avoids clashes by not including
  * any of the conventional gem5 headers (e.g. Packet or SimObject).
  */
-class DRAMSim3Wrapper
+class DRAMsim3Wrapper
 {
 
   private:
@@ -85,17 +85,17 @@ class DRAMSim3Wrapper
   public:
 
     /**
-     * Create an instance of the DRAMSim3 multi-channel memory
+     * Create an instance of the DRAMsim3 multi-channel memory
      * controller using a specific config and system description.
      *
      * @param config_file Memory config file
      * @param working_dir Path pre-pended to config files
      */
-    DRAMSim3Wrapper(const std::string& config_file,
+    DRAMsim3Wrapper(const std::string& config_file,
                     const std::string& working_dir,
                     std::function<void(uint64_t)> read_cb,
                     std::function<void(uint64_t)> write_cb);
-    ~DRAMSim3Wrapper();
+    ~DRAMsim3Wrapper();
 
     /**
      * Print the stats gathered in DRAMsim3.
@@ -126,12 +126,12 @@ class DRAMSim3Wrapper
     /**
      * Enqueue a packet. This assumes that canAccept has returned true.
      *
-     * @param pkt Packet to turn into a DRAMSim3 transaction
+     * @param pkt Packet to turn into a DRAMsim3 transaction
      */
     void enqueue(uint64_t addr, bool is_write);
 
     /**
-     * Get the internal clock period used by DRAMSim3, specified in
+     * Get the internal clock period used by DRAMsim3, specified in
      * ns.
      *
      * @return The clock period of the DRAM interface in ns
@@ -139,14 +139,14 @@ class DRAMSim3Wrapper
     double clockPeriod() const;
 
     /**
-     * Get the transaction queue size used by DRAMSim3.
+     * Get the transaction queue size used by DRAMsim3.
      *
      * @return The queue size counted in number of transactions
      */
     unsigned int queueSize() const;
 
     /**
-     * Get the burst size in bytes used by DRAMSim3.
+     * Get the burst size in bytes used by DRAMsim3.
      *
      * @return The burst size in bytes (data width * burst length)
      */

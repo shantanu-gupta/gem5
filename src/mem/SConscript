@@ -80,7 +80,7 @@ if env['HAVE_DRAMSIM']:
     Source('dramsim2.cc')
 
 if env['HAVE_DRAMSIM3']:
-    SimObject('DRAMSim3.py')
+    SimObject('DRAMsim3.py')
     Source('dramsim3_wrapper.cc')
     Source('dramsim3.cc')
 
@@ -108,7 +108,7 @@ DebugFlag('MemoryAccess')
 DebugFlag('PacketQueue')
 DebugFlag('StackDist')
 DebugFlag("DRAMSim2")
-DebugFlag("DRAMSim3")
+DebugFlag("DRAMsim3")
 DebugFlag('HMCController')
 DebugFlag('SerialLink')
 
