@@ -60,11 +60,15 @@
 #define sigev_notify_thread_id     _sigev_un._tid
 #endif
 
+/*
 static pid_t
 gettid()
 {
     return syscall(__NR_gettid);
 }
+*/
+// from https://hg.mozilla.org/mozilla-central/rev/7b85bf9c5210
+#define gettid() static_cast<pid_t>(syscall(__NR_gettid))
 
 /**
  * Minimum number of cycles that a host can spend in a KVM call (used
